@@ -52,6 +52,15 @@ void personNoLight()
   PORTB &= ~((1 << 1) | (1 << 2) | (1 << 0));
 }
 
+void timerFunc(unsigned long *timer, unsigned long delay, int *countValue)
+{
+  if (millis() - *timer >= delay)
+  {
+    *timer = millis();
+    *countValue = *countValue + 1;
+  }
+}
+
 void setup()
 {
   Serial.begin(9600);
@@ -68,11 +77,7 @@ void loop()
   }
   if (flag == 1)
   {
-    if (millis() - stopTimer >= 500)
-    {
-      stopTimer = millis();
-      countStopValue++;
-    }
+    timerFunc(&stopTimer, 500, &countStopValue);
     if (countStopValue <= 6)
     {
       carRedLight();
@@ -88,11 +93,7 @@ void loop()
   }
   else
   {
-    if (millis() - timer >= 500)
-    {
-      timer = millis();
-      countValue++;
-    }
+    timerFunc(&timer, 500, &countValue);
     if (countValue == 0 && countValue <= 6)
     {
       carGreenLight();
