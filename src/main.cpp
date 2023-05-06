@@ -73,12 +73,17 @@ void loop()
       stopTimer = millis();
       countStopValue++;
     }
-    carRedLight();
-    personGreenLight();
-    if (countStopValue == 3)
+    if (countStopValue <= 6)
+    {
+      carRedLight();
+      personGreenLight();
+    }
+
+    if (countStopValue > 6)
     {
       flag = 0;
       countStopValue = 0;
+      countValue = 17;
     }
   }
   else
@@ -93,7 +98,7 @@ void loop()
       carGreenLight();
       personRedLight();
     }
-    if (countValue == 7 && countValue >= 10)
+    if (countValue > 6 && countValue <= 10)
     {
       carYellowLight();
       personYellowLight();
@@ -103,12 +108,12 @@ void loop()
       carRedLight();
       personGreenLight();
     }
-    if (countValue == 17)
+    if (countValue > 16 && countValue < 18)
     {
       carYellowLight();
       personNoLight();
     }
-    if (countValue == 18)
+    if (countValue > 17 && countValue < 19)
     {
       carYellowLight();
       personGreenLight();
@@ -123,7 +128,12 @@ void loop()
       carYellowLight();
       personGreenLight();
     }
-    if (countValue > 20)
+    if (countValue == 21)
+    {
+      carYellowLight();
+      personNoLight();
+    }
+    if (countValue > 21)
     {
       countValue = 0;
     }
