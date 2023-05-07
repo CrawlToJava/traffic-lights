@@ -1,56 +1,21 @@
 #include <Arduino.h>
+#include "entity/TrafficLighter.h"
+
+#define CAR_RED_LIGHT 5
+#define CAR_YELLOW_LIGHT 4
+#define CAR_GREEN_LIGHT 3
+
+#define PERSON_RED_LIGHT 2
+#define PERSON_YELLOW_LIGHT 1
+#define PERSON_GREEN_LIGHT 0
 
 unsigned long timer = 0;
 unsigned long stopTimer = 0;
 bool flag;
 int countStopValue = 0;
 int countValue = 0;
-
-void carRedLight()
-{
-  PORTB &= ~((1 << 4) | (1 << 3));
-  PORTB |= (1 << 5);
-}
-
-void carYellowLight()
-{
-  PORTB &= ~((1 << 5) | (1 << 3));
-  PORTB |= (1 << 4);
-}
-
-void carGreenLight()
-{
-  PORTB &= ~((1 << 5) | (1 << 4));
-  PORTB |= (1 << 3);
-}
-
-void carNoLight()
-{
-  PORTB &= ~((1 << 5) | (1 << 4) | (1 << 3));
-}
-
-void personRedLight()
-{
-  PORTB &= ~((1 << 1) | (1 << 0));
-  PORTB |= (1 << 2);
-}
-
-void personYellowLight()
-{
-  PORTB &= ~((1 << 0) | (1 << 2));
-  PORTB |= (1 << 1);
-}
-
-void personGreenLight()
-{
-  PORTB &= ~((1 << 1) | (1 << 2));
-  PORTB |= (1 << 0);
-}
-
-void personNoLight()
-{
-  PORTB &= ~((1 << 1) | (1 << 2) | (1 << 0));
-}
+TrafficLighter carTrafficLighter;
+TrafficLighter personTrafficLighter;
 
 void timerFunc(unsigned long *timer, unsigned long delay, int *countValue)
 {
@@ -80,8 +45,8 @@ void loop()
     timerFunc(&stopTimer, 500, &countStopValue);
     if (countStopValue <= 6)
     {
-      carRedLight();
-      personGreenLight();
+      carTrafficLighter.redLight(CAR_RED_LIGHT, CAR_YELLOW_LIGHT, CAR_GREEN_LIGHT);
+      personTrafficLighter.greenLight(PERSON_GREEN_LIGHT, PERSON_YELLOW_LIGHT, PERSON_RED_LIGHT);
     }
 
     if (countStopValue > 6)
@@ -96,43 +61,43 @@ void loop()
     timerFunc(&timer, 500, &countValue);
     if (countValue == 0 && countValue <= 6)
     {
-      carGreenLight();
-      personRedLight();
+      carTrafficLighter.greenLight(CAR_GREEN_LIGHT, CAR_YELLOW_LIGHT, CAR_RED_LIGHT);
+      personTrafficLighter.redLight(PERSON_RED_LIGHT, PERSON_YELLOW_LIGHT, PERSON_GREEN_LIGHT);
     }
     if (countValue > 6 && countValue <= 10)
     {
-      carYellowLight();
-      personYellowLight();
+      carTrafficLighter.yellowLight(CAR_YELLOW_LIGHT, CAR_RED_LIGHT, CAR_GREEN_LIGHT);
+      personTrafficLighter.yellowLight(PERSON_YELLOW_LIGHT, PERSON_RED_LIGHT, PERSON_GREEN_LIGHT);
     }
     if (countValue > 10 && countValue <= 16)
     {
-      carRedLight();
-      personGreenLight();
+      carTrafficLighter.redLight(CAR_RED_LIGHT, CAR_YELLOW_LIGHT, CAR_GREEN_LIGHT);
+      personTrafficLighter.greenLight(PERSON_GREEN_LIGHT, PERSON_YELLOW_LIGHT, PERSON_RED_LIGHT);
     }
     if (countValue > 16 && countValue < 18)
     {
-      carYellowLight();
-      personNoLight();
+      carTrafficLighter.yellowLight(CAR_YELLOW_LIGHT, CAR_RED_LIGHT, CAR_GREEN_LIGHT);
+      personTrafficLighter.noLight(PERSON_GREEN_LIGHT, PERSON_YELLOW_LIGHT, PERSON_RED_LIGHT);
     }
     if (countValue > 17 && countValue < 19)
     {
-      carYellowLight();
-      personGreenLight();
+      carTrafficLighter.yellowLight(CAR_YELLOW_LIGHT, CAR_RED_LIGHT, CAR_GREEN_LIGHT);
+      personTrafficLighter.greenLight(PERSON_GREEN_LIGHT, PERSON_YELLOW_LIGHT, PERSON_RED_LIGHT);
     }
     if (countValue == 19)
     {
-      carYellowLight();
-      personNoLight();
+      carTrafficLighter.yellowLight(CAR_YELLOW_LIGHT, CAR_RED_LIGHT, CAR_GREEN_LIGHT);
+      personTrafficLighter.noLight(PERSON_GREEN_LIGHT, PERSON_YELLOW_LIGHT, PERSON_RED_LIGHT);
     }
     if (countValue == 20)
     {
-      carYellowLight();
-      personGreenLight();
+      carTrafficLighter.yellowLight(CAR_YELLOW_LIGHT, CAR_RED_LIGHT, CAR_GREEN_LIGHT);
+      personTrafficLighter.greenLight(PERSON_GREEN_LIGHT, PERSON_YELLOW_LIGHT, PERSON_RED_LIGHT);
     }
     if (countValue == 21)
     {
-      carYellowLight();
-      personNoLight();
+      carTrafficLighter.yellowLight(CAR_YELLOW_LIGHT, CAR_RED_LIGHT, CAR_GREEN_LIGHT);
+      personTrafficLighter.noLight(PERSON_GREEN_LIGHT, PERSON_YELLOW_LIGHT, PERSON_RED_LIGHT);
     }
     if (countValue > 21)
     {
