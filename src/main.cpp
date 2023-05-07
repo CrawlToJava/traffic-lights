@@ -52,33 +52,13 @@ void personNoLight()
   PORTB &= ~((1 << 1) | (1 << 2) | (1 << 0));
 }
 
-void redLight()
+void timerFunc(unsigned long *timer, unsigned long delay, int *countValue)
 {
-  PORTB &= ~((1 << 4) | (1 << 3) | (1 << 1) | (1 << 0));
-  PORTB |= (1 << 5) | (1 << 2);
-}
-
-void yellowLight()
-{
-  PORTB &= ~((1 << 5) | (1 << 3) | (1 << 2) | (1 << 0));
-  PORTB |= (1 << 4) | (1 << 1);
-}
-
-void greenLight()
-{
-  PORTB &= ~((1 << 5) | (1 << 4) | (1 << 2) | (1 << 1));
-  PORTB |= (1 << 0) | (1 << 3);
-}
-
-void noLight()
-{
-  PORTB &= ~((1 << 4) | (1 << 3) | (1 << 1) | (1 << 0) | (1 << 5) | (1 << 2));
-}
-
-void pederstianModeFunc()
-{
-  PORTB &= ~((1 << 0) | (1 << 1) | (1 << 4) | (1 << 5));
-  PORTB |= (1 << 3) | (1 << 2);
+  if (millis() - *timer >= delay)
+  {
+    *timer = millis();
+    *countValue = *countValue + 1;
+  }
 }
 
 void setup()
@@ -97,110 +77,64 @@ void loop()
   }
   if (flag == 1)
   {
-    if (millis() - stopTimer >= 500)
-    {
-      stopTimer = millis();
-      countStopValue++;
-    }
-    if (countStopValue == 2 && countStopValue <= 6)
-    {
-      pederstianModeFunc();
-    }
-    if (countStopValue == 7)
-    {
-      PORTB &= ~((1 << 5) | (1 << 4) | (1 << 2) | (1 << 0) | (1 << 3));
-      PORTB |= (1 << 1);
-    }
-    if (countStopValue == 8)
-    {
-      PORTB &= ~((1 << 5) | (1 << 4) | (1 << 2) | (1 << 0));
-      PORTB |= (1 << 3);
-    }
-    if (countValue == 9)
-    {
-      PORTB &= ~((1 << 5) | (1 << 4) | (1 << 2) | (1 << 0) | (1 << 3));
-      PORTB |= (1 << 1);
-    }
-    if (countStopValue == 10)
-    {
-      PORTB &= ~((1 << 5) | (1 << 4) | (1 << 2) | (1 << 0));
-      PORTB |= (1 << 3);
-    }
-    if (countStopValue == 11)
-    {
-      PORTB &= ~((1 << 5) | (1 << 4) | (1 << 2) | (1 << 0) | (1 << 3));
-      PORTB |= (1 << 1);
-    }
-    if (countStopValue == 12)
-    {
-      PORTB &= ~((1 << 5) | (1 << 4) | (1 << 2) | (1 << 0));
-      PORTB |= (1 << 3);
-    }
-    if (countValue == 13)
-    {
-      PORTB &= ~((1 << 5) | (1 << 4) | (1 << 2) | (1 << 0) | (1 << 3));
-      PORTB |= (1 << 1);
-    }
-    if (countStopValue == 14)
-    {
-      PORTB &= ~((1 << 5) | (1 << 4) | (1 << 2) | (1 << 0));
-      PORTB |= (1 << 3);
-    }
-    if (countStopValue > 14)
-    {
-      flag = 0;
-      countStopValue = 0;
-      countValue = 9;
-    }
-  }
-  else
-  {
-    if (millis() - timer >= 500)
-    {
-      timer = millis();
-      countValue++;
-    }
-    if (countValue == 0 && countValue <= 4)
-    {
-      carGreenLight();
-      personRedLight();
-    }
-    if (countValue == 5)
-    {
-      personNoLight();
-      carNoLight();
-    }
-    if (countValue == 6)
-    {
-      carGreenLight();
-      personRedLight();
-    }
-    if (countValue == 7)
-    {
-      personNoLight();
-      carNoLight();
-    }
-    if (countValue == 8)
-    {
-      carGreenLight();
-      personRedLight();
-    }
-    if (countValue >= 9 && countValue <= 10)
-    {
-      carYellowLight();
-      personYellowLight();
-    }
-    if (countValue > 10 && countValue <= 14)
+    timerFunc(&stopTimer, 500, &countStopValue);
+    if (countStopValue <= 6)
     {
       carRedLight();
       personGreenLight();
     }
-    if (countValue >= 15 && countValue <= 16)
+
+    if (countStopValue > 6)
+    {
+      flag = 0;
+      countStopValue = 0;
+      countValue = 17;
+    }
+  }
+  else
+  {
+    timerFunc(&timer, 500, &countValue);
+    if (countValue == 0 && countValue <= 6)
+    {
+      carGreenLight();
+      personRedLight();
+    }
+    if (countValue > 6 && countValue <= 10)
     {
       carYellowLight();
       personYellowLight();
     }
-    if (countValue > 16)
+    if (countValue > 10 && countValue <= 16)
+    {
+      carRedLight();
+      personGreenLight();
+    }
+    if (countValue > 16 && countValue < 18)
+    {
+      carYellowLight();
+      personNoLight();
+    }
+    if (countValue > 17 && countValue < 19)
+    {
+      carYellowLight();
+      personGreenLight();
+    }
+    if (countValue == 19)
+    {
+      carYellowLight();
+      personNoLight();
+    }
+    if (countValue == 20)
+    {
+      carYellowLight();
+      personGreenLight();
+    }
+    if (countValue == 21)
+    {
+      carYellowLight();
+      personNoLight();
+    }
+    if (countValue > 21)
     {
       countValue = 0;
     }
